@@ -1,0 +1,153 @@
+@import "tailwindcss";
+@import "../node_modules/@livekit/components-styles/dist/general/index.css";
+
+:root {
+  --background: #faf9f7;
+  --foreground: #1c1c1f;
+
+  /* Application (light) surfaces */
+  --app-surface: #ffffff;
+  --app-surface-subtle: #f4f2ef;
+  --app-border: #e7e5e1;
+  --app-border-strong: #d8d5d0;
+  --app-muted: #71717a;
+  --app-subtle: #9f9ea6;
+
+  /* Brand accent — refined indigo/violet */
+  --accent: #5b5bd6;
+  --accent-strong: #4c4cc8;
+  --accent-soft: #eef0fe;
+  --accent-foreground: #ffffff;
+
+  /* Danger */
+  --danger: #d64545;
+  --danger-strong: #b93737;
+  --danger-soft: #fdeeee;
+
+  /* Meeting room (dark) surfaces */
+  --room: #0c0d11;
+  --room-surface: #16181d;
+  --room-surface-elevated: #1e2128;
+  --room-border: #2a2d35;
+  --room-fg: #f4f4f0;
+  --room-muted: #a2a4ae;
+  --room-subtle: #7c7e88;
+}
+
+@theme inline {
+  /* Extra-small breakpoint for grid arrangements on small phones */
+  --breakpoint-xs: 28rem;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--app-surface);
+  --color-surface-subtle: var(--app-surface-subtle);
+  --color-border-line: var(--app-border);
+  --color-border-strong: var(--app-border-strong);
+  --color-muted: var(--app-muted);
+  --color-subtle: var(--app-subtle);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-danger: var(--danger);
+  --color-danger-strong: var(--danger-strong);
+  --color-danger-soft: var(--danger-soft);
+  --color-room: var(--room);
+  --color-room-surface: var(--room-surface);
+  --color-room-surface-elevated: var(--room-surface-elevated);
+  --color-room-border: var(--room-border);
+  --color-room-fg: var(--room-fg);
+  --color-room-muted: var(--room-muted);
+  --color-room-subtle: var(--room-subtle);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* LiveKit component baseline overrides so control/participant surfaces
+   blend into the meeting room theme. */
+.lk-rotated {
+  display: none;
+}
+
+.lk-participant-placeholder {
+  background: var(--room);
+}
+
+/* Thin, subtle scrollbars for panels */
+.lk-scroll,
+.meeting-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.meeting-scroll::-webkit-scrollbar-thumb {
+  background: var(--room-border);
+  border-radius: 999px;
+}
+.meeting-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes room-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes room-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes room-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-room-panel-in {
+  animation: room-panel-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animate-room-fade-in {
+  animation: room-fade-in 0.16s ease-out;
+}
+.animate-room-pop {
+  animation: room-pop 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-room-panel-in,
+  .animate-room-fade-in,
+  .animate-room-pop {
+    animation: none;
+  }
+}
