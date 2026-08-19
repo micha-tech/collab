@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
@@ -39,8 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
       <body className="min-h-dvh antialiased">
-        {children}
-        <Toaster />
+        <TooltipProvider delayDuration={0}>
+          {children}
+          <Toaster />
+        </TooltipProvider>
       </body>
     </html>
   );
