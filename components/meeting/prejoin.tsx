@@ -106,31 +106,6 @@ export function PreJoin({
                 {name.trim() || "You"}
               </div>
             )}
-
-            <div className="absolute right-3 top-3 flex items-center gap-1.5 text-xs text-room-muted">
-              <span
-                className={cn(
-                  "rounded-md px-2 py-1",
-                  media.micEnabled
-                    ? "bg-black/55 text-room-fg"
-                    : "bg-danger-strong text-white",
-                )}
-                aria-label={media.micEnabled ? "Microphone on" : "Microphone muted"}
-              >
-                {media.micEnabled ? "Mic on" : "Mic muted"}
-              </span>
-              <span
-                className={cn(
-                  "rounded-md px-2 py-1",
-                  media.cameraEnabled
-                    ? "bg-black/55 text-room-fg"
-                    : "bg-danger-strong text-white",
-                )}
-                aria-label={media.cameraEnabled ? "Camera on" : "Camera off"}
-              >
-                {media.cameraEnabled ? "Camera on" : "Camera off"}
-              </span>
-            </div>
           </div>
 
           {/* Controls */}
@@ -310,8 +285,7 @@ export function PreJoin({
             </Button>
 
             <p className="text-center text-xs text-room-subtle">
-              You&apos;re joining over the internet through LiveKit Cloud. No
-              account needed.
+              Join over a secure connection. No account needed.
             </p>
           </div>
         </div>

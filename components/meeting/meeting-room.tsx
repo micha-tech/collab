@@ -66,7 +66,6 @@ export function MeetingRoom({
         meetingSlug={meeting.slug}
         title={meeting.title}
         participantCount={participants.length}
-        isGuest={!isHost}
       />
 
       <main

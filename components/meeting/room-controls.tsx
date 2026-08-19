@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocalParticipant } from "@livekit/components-react";
-import { MonitorUp, MonitorOff, Camera, CameraOff, Mic, MicOff, MessageSquare, Users, PhoneOff, MoreHorizontal } from "lucide-react";
+import { MonitorUp, MonitorOff, Camera, CameraOff, Mic, MicOff, MessageSquare, Users, PhoneOff, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -204,10 +204,10 @@ export function MeetingControls({
         <button
           type="button"
           onClick={onEnd}
-          className="mt-1 h-10 items-center rounded-lg border border-danger/60 px-2 text-[11px] font-medium text-danger transition-colors hover:bg-danger hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/60 md:inline-flex md:px-3"
+          className="mt-3 flex h-11 items-center gap-2 rounded-full border border-danger/70 bg-danger/90 px-5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-danger-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/60"
         >
-          <MoreHorizontal className="mr-1 size-4" aria-hidden />
-          End meeting for everyone
+          <Square className="size-4 fill-current" aria-hidden />
+          End meeting
         </button>
       )}
     </div>

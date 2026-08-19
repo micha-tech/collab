@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useConnectionState } from "@livekit/components-react";
 import { ConnectionState } from "livekit-client";
-import { Check, Copy, ArrowLeft } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { meetingUrl } from "@/lib/utils";
 import { VMark } from "@/components/layout/brand-mark";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -13,12 +13,10 @@ export function RoomHeader({
   meetingSlug,
   title,
   participantCount,
-  isGuest,
 }: {
   meetingSlug: string;
   title: string;
   participantCount: number;
-  isGuest: boolean;
 }) {
   const [copied, setCopied] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -107,16 +105,6 @@ export function RoomHeader({
           </TooltipTrigger>
           <TooltipContent>Copy meeting link</TooltipContent>
         </Tooltip>
-
-        {isGuest && (
-          <Link
-            href="/"
-            aria-label="Back to home"
-            className="rounded-lg p-2 text-room-muted transition-colors hover:bg-room-surface-elevated hover:text-room-fg md:hidden"
-          >
-            <ArrowLeft className="size-5" />
-          </Link>
-        )}
       </div>
     </header>
   );
