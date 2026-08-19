@@ -214,8 +214,14 @@ export function MeetingGateway({ meeting, initialUser }: MeetingGatewayProps) {
       const err = (await res.json().catch(() => null)) as ApiErrorBody | null;
       throw new Error(err?.error ?? "Couldn't end the meeting.");
     }
-    // The room is closed server-side; the disconnect handler moves us along.
-  }, [meeting.slug]);
+    // Meeting ended — disconnect locally immediately so we stop sending
+    // media right away, even if the server-side room teardown is slow.
+    intentionalRef.current = true;
+    media.cleanUp();
+    roomRef.current?.disconnect();
+    setTokenInfo(null);
+    setPhase("meeting-ended");
+  }, [meeting.slug, media]);
 
   const handleRejoinFromLost = useCallback(() => {
     void join(displayName);

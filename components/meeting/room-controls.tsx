@@ -204,7 +204,7 @@ export function MeetingControls({
         <button
           type="button"
           onClick={onEnd}
-          className="mt-3 flex h-11 items-center gap-2 rounded-full border border-danger/70 bg-danger/90 px-5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-danger-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/60"
+          className="pointer-events-auto mt-3 flex h-11 items-center gap-2 rounded-full border border-danger/70 bg-danger/90 px-5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-danger-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/60"
         >
           <Square className="size-4 fill-current" aria-hidden />
           End meeting
