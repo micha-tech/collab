@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BrandMark } from "@/components/layout/brand-mark";
+import { BrandMark } from "@/components/brand-mark";
 import Link from "next/link";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {

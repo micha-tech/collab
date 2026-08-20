@@ -80,8 +80,8 @@ export function MeetingControls({
   // LiveKit track muted state drives the icons.
   useEffect(() => {
     const updateMuted = () => {
-      setMicOn(!localParticipant.isMicrophoneEnabled);
-      setCamOn(!localParticipant.isCameraEnabled);
+      setMicOn(localParticipant.isMicrophoneEnabled);
+      setCamOn(localParticipant.isCameraEnabled);
     };
     updateMuted();
     localParticipant
@@ -98,6 +98,9 @@ export function MeetingControls({
     setTogglingMic(true);
     try {
       await localParticipant.setMicrophoneEnabled(!micOn);
+    } catch {
+      // Browser rejected the request or the track failed; state stays in sync
+      // via trackMuted/trackUnmuted events.
     } finally {
       setTogglingMic(false);
     }
@@ -107,6 +110,8 @@ export function MeetingControls({
     setTogglingCam(true);
     try {
       await localParticipant.setCameraEnabled(!camOn);
+    } catch {
+      // Browser rejected the request or the track failed.
     } finally {
       setTogglingCam(false);
     }

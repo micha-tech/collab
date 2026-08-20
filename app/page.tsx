@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { BrandMark } from "@/components/layout/brand-mark";
+import { BrandMark } from "@/components/brand-mark";
 import { Button } from "@/components/ui/button";
 import { HomeJoinForm, StartMeetingButton } from "@/components/home/home-join";
 

@@ -6,7 +6,7 @@ import { useConnectionState } from "@livekit/components-react";
 import { ConnectionState } from "livekit-client";
 import { Check, Copy } from "lucide-react";
 import { meetingUrl } from "@/lib/utils";
-import { VMark } from "@/components/layout/brand-mark";
+import { BrandMark } from "@/components/brand-mark";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function RoomHeader({
@@ -63,7 +63,7 @@ export function RoomHeader({
         aria-label="Back to V One Collab home"
         className="rounded-md p-1.5 text-room-muted transition-colors hover:bg-room-surface-elevated hover:text-room-fg"
       >
-        <VMark className="size-5" />
+        <BrandMark tone="light" className="text-sm" />
       </Link>
 
       <div className="min-w-0 flex-1">
