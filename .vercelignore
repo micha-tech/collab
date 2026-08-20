@@ -1,0 +1,4 @@
+# Vercel production configuration is managed through project environment
+# variables. Never upload local environment files with a deployment bundle.
+.env
+.env.*

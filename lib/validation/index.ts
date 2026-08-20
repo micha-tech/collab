@@ -4,7 +4,7 @@ import {
   DEFAULT_MEETING_TITLE,
   MAX_DISPLAY_NAME_LENGTH,
   MAX_TITLE_LENGTH,
-} from "@/lib/constants";
+} from "../constants";
 
 export const meetingSlugSchema = z
   .string()
@@ -19,6 +19,7 @@ export const createMeetingSchema = z.object({
     .min(1)
     .max(MAX_TITLE_LENGTH)
     .default(DEFAULT_MEETING_TITLE),
+  allowGuests: z.boolean().default(true),
 });
 
 export const joinMeetingSchema = z.object({

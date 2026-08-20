@@ -1,8 +1,11 @@
 import "server-only";
 
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/supabase";
 import type { MeetingRow, MeetingParticipantRow } from "@/types/supabase";
-import type { Meeting, MeetingParticipant, MeetingRole } from "@/types";
+import type { Meeting, MeetingParticipant } from "@/types";
 
 export async function getMeetingBySlug(
   slug: string,
@@ -30,30 +33,21 @@ export async function getMeetingById(id: string): Promise<Meeting | null> {
   return data as Meeting;
 }
 
-export async function upsertParticipant(input: {
+export async function joinMeetingParticipant(input: {
   meetingId: string;
-  userId: string;
   displayName: string;
-  role: MeetingRole;
+  client?: SupabaseClient<Database>;
 }): Promise<MeetingParticipant | null> {
-  const admin = createAdminClient();
-  const { data, error } = await admin
-    .from("meeting_participants")
-    .upsert(
-      {
-        meeting_id: input.meetingId,
-        user_id: input.userId,
-        display_name: input.displayName,
-        role: input.role,
-        joined_at: new Date().toISOString(),
-      },
-      { onConflict: "meeting_id,user_id" },
-    )
-    .select()
+  const client = input.client ?? (await createClient());
+  const { data, error } = await client
+    .rpc("join_meeting", {
+      p_meeting_id: input.meetingId,
+      p_display_name: input.displayName,
+    })
     .single();
 
   if (error) {
-    console.error("upsertParticipant failed", error.message);
+    console.error("joinMeetingParticipant failed", error.message);
     return null;
   }
   return data as MeetingParticipant;
@@ -79,20 +73,20 @@ export async function createMeetingRecord(input: {
   id: string;
   slug: string;
   title: string;
-  hostId: string;
   livekitRoomName: string;
+  displayName: string;
+  allowGuests: boolean;
+  client: SupabaseClient<Database>;
 }): Promise<Meeting | null> {
-  const admin = createAdminClient();
-  const { data, error } = await admin
-    .from("meetings")
-    .insert({
-      id: input.id,
-      slug: input.slug,
-      title: input.title,
-      host_id: input.hostId,
-      livekit_room_name: input.livekitRoomName,
+  const { data, error } = await input.client
+    .rpc("create_meeting_with_host", {
+      p_id: input.id,
+      p_slug: input.slug,
+      p_title: input.title,
+      p_livekit_room_name: input.livekitRoomName,
+      p_display_name: input.displayName,
+      p_allow_guests: input.allowGuests,
     })
-    .select()
     .single();
 
   if (error) {
@@ -105,12 +99,9 @@ export async function createMeetingRecord(input: {
 export async function endMeetingRecord(
   meetingId: string,
 ): Promise<Meeting | null> {
-  const admin = createAdminClient();
-  const { data, error } = await admin
-    .from("meetings")
-    .update({ status: "ended", ended_at: new Date().toISOString() })
-    .eq("id", meetingId)
-    .select()
+  const client = await createClient();
+  const { data, error } = await client
+    .rpc("end_meeting", { p_meeting_id: meetingId })
     .single();
 
   if (error) {

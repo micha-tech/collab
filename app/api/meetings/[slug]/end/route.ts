@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { meetingSlugSchema } from "@/lib/validation";
 import { jsonError } from "@/lib/api";
-import { rateLimit, clientKey, RATE_LIMIT } from "@/lib/rate-limit";
-import { endMeetingRecord, getMeetingBySlug } from "@/lib/db";
+import { rateLimit, clientKey, RATE_LIMIT, withRateLimitHeaders } from "@/lib/rate-limit";
+import { endMeetingRecord } from "@/lib/db";
 import { closeLiveKitRoom } from "@/lib/livekit/server";
 import { hashIpForLogs } from "@/lib/meetings";
+import { getMeetingAccessContext } from "@/lib/auth/meeting-access";
 
 /**
  * Host-only "end meeting for everyone".
@@ -16,13 +16,16 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const ip = clientKey(request);
-  const limited = rateLimit(
+  const limited = await rateLimit(
     `end:${ip}`,
     RATE_LIMIT.endMeeting.limit,
     RATE_LIMIT.endMeeting.windowMs,
   );
   if (!limited.ok) {
-    return jsonError("Too many requests. Try again shortly.", 429);
+    return withRateLimitHeaders(
+      jsonError("Too many requests. Try again shortly.", 429),
+      limited,
+    );
   }
 
   const { slug } = await params;
@@ -31,32 +34,39 @@ export async function POST(
     return jsonError("Meeting not found.", 404, "meeting_not_found");
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { meeting, user, isHost } = await getMeetingAccessContext(parsed.data);
 
   if (!user || user.is_anonymous) {
     return jsonError("Only the meeting host can end this meeting.", 403, "forbidden");
   }
 
-  const meeting = await getMeetingBySlug(parsed.data);
   if (!meeting) {
     return jsonError("Meeting not found.", 404, "meeting_not_found");
   }
-  if (meeting.host_id !== user.id) {
+  if (!isHost) {
     return jsonError("Only the meeting host can end this meeting.", 403, "forbidden");
   }
   if (meeting.status !== "active") {
-    return jsonError("This meeting has already ended.", 410, "meeting_ended");
+    return NextResponse.json({
+      ok: true,
+      meeting: {
+        id: meeting.id,
+        slug: meeting.slug,
+        status: meeting.status,
+        ended_at: meeting.ended_at,
+      },
+    });
   }
 
-  await closeLiveKitRoom(meeting.livekit_room_name);
-
+  // Persist the terminal state before performing the external side effect.
+  // If LiveKit deletion is delayed or fails, no new tokens can be issued and
+  // retrying this endpoint remains safe.
   const updated = await endMeetingRecord(meeting.id);
   if (!updated) {
     return jsonError("Couldn't end the meeting. Please try again.", 500);
   }
+
+  await closeLiveKitRoom(meeting.livekit_room_name);
 
   console.info(
     `endMeeting ok slug=${meeting.slug} host=${user.id.slice(0, 8)} ip=${hashIpForLogs(

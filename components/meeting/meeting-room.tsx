@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   RoomAudioRenderer,
   useLocalParticipant,
@@ -39,6 +39,7 @@ export function MeetingRoom({
   const [notesOpen, setNotesOpen] = useState(false);
   const [chatUnread, setChatUnread] = useState(false);
   const [endDialogOpen, setEndDialogOpen] = useState(false);
+  const panelOpen = chatOpen || participantsOpen || notesOpen;
 
   const participants = useParticipants();
   const screenTracks = useTracks([Track.Source.ScreenShare]);
@@ -69,6 +70,18 @@ export function MeetingRoom({
     setParticipantsOpen(false);
     setNotesOpen((v) => !v);
   };
+
+  useEffect(() => {
+    if (!panelOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setChatOpen(false);
+      setParticipantsOpen(false);
+      setNotesOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [panelOpen]);
 
   return (
     <div className="relative flex h-dvh w-full flex-col bg-room text-room-fg">

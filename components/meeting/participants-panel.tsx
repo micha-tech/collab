@@ -23,6 +23,8 @@ export function ParticipantsPanel({
   return (
     <aside
       aria-label="Participants"
+      aria-hidden={!open}
+      inert={!open}
       className={cn(
         "absolute inset-y-0 right-0 z-20 flex w-full flex-col border-l border-room-border bg-room-surface transition-transform duration-200 sm:w-[320px]",
         open ? "translate-x-0" : "translate-x-full",

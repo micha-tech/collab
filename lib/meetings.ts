@@ -1,5 +1,5 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { MEETING_ROOM_PREFIX } from "@/lib/constants";
+import { MEETING_ROOM_PREFIX } from "./constants";
 
 export function generateMeetingSlug(): string {
   const tag = "v1";
@@ -18,4 +18,16 @@ export function generateParticipantIdentity(userId: string): string {
 
 export function hashIpForLogs(ip: string): string {
   return createHash("sha256").update(ip).digest("hex").slice(0, 12);
+}
+
+/**
+ * Hosts always have access. Signed-in users may join an active meeting, while
+ * anonymous sessions additionally require the host to allow guests.
+ */
+export function canJoinMeeting(input: {
+  isHost: boolean;
+  isAnonymous: boolean;
+  allowGuests: boolean;
+}): boolean {
+  return input.isHost || !input.isAnonymous || input.allowGuests;
 }

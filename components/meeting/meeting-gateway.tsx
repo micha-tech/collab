@@ -143,6 +143,7 @@ export function MeetingGateway({ meeting, initialUser }: MeetingGatewayProps) {
         setTokenInfo({ token: data.token, serverUrl: data.serverUrl });
         setPhase("call");
       } catch (error) {
+        intentionalRef.current = false;
         setConnectError(
           error instanceof Error ? error.message : "Something went wrong.",
         );
@@ -154,6 +155,9 @@ export function MeetingGateway({ meeting, initialUser }: MeetingGatewayProps) {
 
   const handleConnected = useCallback(
     (room: Room) => {
+      // Joining may intentionally disconnect a stale Room instance. Once the
+      // replacement connects, future disconnects must be treated as genuine.
+      intentionalRef.current = false;
       setConnected(true);
       void publishPrejoinTracks(
         room,

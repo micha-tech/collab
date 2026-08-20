@@ -35,6 +35,11 @@ export function ChatPanel({
   const listRef = useRef<HTMLDivElement | null>(null);
   const loadedRef = useRef(false);
   const initializedRef = useRef(false);
+  const openRef = useRef(open);
+
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
 
   const loadHistory = useCallback(async () => {
     if (loadedRef.current) return;
@@ -91,7 +96,7 @@ export function ChatPanel({
                 new Date(b.created_at).getTime(),
             );
           });
-          if (!open) {
+          if (!openRef.current) {
             onNewMessage(true);
           }
         },
@@ -186,6 +191,8 @@ export function ChatPanel({
   return (
     <aside
       aria-label="Meeting chat"
+      aria-hidden={!open}
+      inert={!open}
       className={cn(
         "absolute inset-y-0 right-0 z-20 flex w-full flex-col border-l border-room-border bg-room-surface transition-transform duration-200 sm:w-[360px]",
         open ? "translate-x-0" : "translate-x-full",

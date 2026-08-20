@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Check,
@@ -8,6 +8,7 @@ import {
   Copy,
   LogIn,
   Plus,
+  Search,
 } from "lucide-react";
 import type { Meeting } from "@/types";
 import { meetingUrl, relativeMeetingDate } from "@/lib/utils";
@@ -41,9 +42,22 @@ function greeting(date: Date): string {
 
 export function DashboardScreen({ profile, recentMeetings }: DashboardScreenProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "ended">("all");
 
   const displayName = profile.display_name.trim() || "there";
   const firstName = displayName.split(" ")[0];
+  const filteredMeetings = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase();
+    return recentMeetings.filter((meeting) => {
+      const statusMatches = statusFilter === "all" || meeting.status === statusFilter;
+      const queryMatches =
+        !normalized ||
+        meeting.title.toLocaleLowerCase().includes(normalized) ||
+        meeting.slug.toLocaleLowerCase().includes(normalized);
+      return statusMatches && queryMatches;
+    });
+  }, [query, recentMeetings, statusFilter]);
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -108,9 +122,46 @@ export function DashboardScreen({ profile, recentMeetings }: DashboardScreenProp
         </div>
 
         <section className="mt-10">
-          <h2 className="text-sm font-medium uppercase tracking-wider text-subtle">
-            Recent meetings
-          </h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-sm font-medium uppercase tracking-wider text-subtle">
+                Recent meetings
+              </h2>
+              {recentMeetings.length > 0 && (
+                <p className="mt-1 text-xs text-muted">
+                  Showing {filteredMeetings.length} of {recentMeetings.length}
+                </p>
+              )}
+            </div>
+
+            {recentMeetings.length > 0 && (
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <label className="relative block">
+                  <span className="sr-only">Search meetings</span>
+                  <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
+                  <input
+                    type="search"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search meetings"
+                    className="h-10 w-full rounded-lg border border-border-line bg-surface pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-subtle focus:border-accent sm:w-56"
+                  />
+                </label>
+                <label>
+                  <span className="sr-only">Filter by status</span>
+                  <select
+                    value={statusFilter}
+                    onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)}
+                    className="h-10 w-full rounded-lg border border-border-line bg-surface px-3 text-sm text-foreground outline-none focus:border-accent sm:w-auto"
+                  >
+                    <option value="all">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="ended">Ended</option>
+                  </select>
+                </label>
+              </div>
+            )}
+          </div>
 
           {recentMeetings.length === 0 ? (
             <div className="mt-4 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border-strong bg-surface-subtle/50 px-6 py-14 text-center">
@@ -123,9 +174,24 @@ export function DashboardScreen({ profile, recentMeetings }: DashboardScreenProp
                 New meeting
               </Button>
             </div>
+          ) : filteredMeetings.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-border-line bg-surface-subtle/50 px-6 py-10 text-center">
+              <p className="text-sm font-medium text-foreground">No matching meetings</p>
+              <p className="mt-1 text-sm text-muted">Try another search or status filter.</p>
+              <Button
+                variant="ghost"
+                className="mt-3"
+                onClick={() => {
+                  setQuery("");
+                  setStatusFilter("all");
+                }}
+              >
+                Clear filters
+              </Button>
+            </div>
           ) : (
             <ul className="mt-3 divide-y divide-border-line">
-              {recentMeetings.map((meeting) => (
+              {filteredMeetings.map((meeting) => (
                 <MeetingRow key={meeting.id} meeting={meeting} />
               ))}
             </ul>

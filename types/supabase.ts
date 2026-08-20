@@ -47,6 +47,27 @@ export type MeetingNotesRow = {
   updated_at: string;
 }
 
+export type LiveKitWebhookEventRow = {
+  id: string;
+  event_type: string;
+  received_at: string;
+}
+
+export type ParticipantSessionRow = {
+  id: string;
+  meeting_id: string;
+  user_id: string | null;
+  livekit_participant_sid: string;
+  livekit_identity: string;
+  display_name: string;
+  region: string | null;
+  joined_at: string;
+  left_at: string | null;
+  disconnect_reason: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -84,9 +105,59 @@ export interface Database {
         Update: Partial<MeetingNotesRow>;
         Relationships: [];
       };
+      livekit_webhook_events: {
+        Row: LiveKitWebhookEventRow;
+        Insert: Pick<LiveKitWebhookEventRow, "id" | "event_type">;
+        Update: never;
+        Relationships: [];
+      };
+      participant_sessions: {
+        Row: ParticipantSessionRow;
+        Insert: Partial<ParticipantSessionRow> &
+          Pick<ParticipantSessionRow, "meeting_id" | "livekit_participant_sid" | "livekit_identity" | "display_name" | "joined_at">;
+        Update: Partial<ParticipantSessionRow>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      create_meeting_with_host: {
+        Args: {
+          p_id: string;
+          p_slug: string;
+          p_title: string;
+          p_livekit_room_name: string;
+          p_display_name: string;
+          p_allow_guests: boolean;
+        };
+        Returns: MeetingRow[];
+      };
+      join_meeting: {
+        Args: { p_meeting_id: string; p_display_name: string };
+        Returns: MeetingParticipantRow[];
+      };
+      end_meeting: {
+        Args: { p_meeting_id: string };
+        Returns: MeetingRow[];
+      };
+      process_livekit_participant_webhook: {
+        Args: {
+          p_event_id: string;
+          p_event_type: string;
+          p_meeting_id: string;
+          p_user_id: string;
+          p_room_name: string;
+          p_participant_sid: string;
+          p_identity: string;
+          p_display_name: string;
+          p_region: string;
+          p_joined_at: string;
+          p_event_at: string;
+          p_disconnect_reason: number;
+        };
+        Returns: boolean;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

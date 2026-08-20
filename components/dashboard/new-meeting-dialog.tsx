@@ -26,6 +26,7 @@ interface NewMeetingDialogProps {
 export function NewMeetingDialog({ open, onOpenChange }: NewMeetingDialogProps) {
   const router = useRouter();
   const [title, setTitle] = useState(DEFAULT_MEETING_TITLE);
+  const [allowGuests, setAllowGuests] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdSlug, setCreatedSlug] = useState<string | null>(null);
@@ -38,7 +39,10 @@ export function NewMeetingDialog({ open, onOpenChange }: NewMeetingDialogProps) 
       const res = await fetch("/api/meetings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: title.trim() || DEFAULT_MEETING_TITLE }),
+        body: JSON.stringify({
+          title: title.trim() || DEFAULT_MEETING_TITLE,
+          allowGuests,
+        }),
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => null)) as { error?: string } | null;
@@ -90,6 +94,24 @@ export function NewMeetingDialog({ open, onOpenChange }: NewMeetingDialogProps) 
                 disabled={busy}
               />
             </div>
+
+            <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-border-line bg-surface-subtle/60 p-3">
+              <input
+                type="checkbox"
+                checked={allowGuests}
+                onChange={(event) => setAllowGuests(event.target.checked)}
+                disabled={busy}
+                className="mt-0.5 size-4 accent-accent"
+              />
+              <span>
+                <span className="block text-sm font-medium text-foreground">
+                  Allow guests without accounts
+                </span>
+                <span className="mt-0.5 block text-xs leading-relaxed text-muted">
+                  Anyone with the meeting link can choose a name and join.
+                </span>
+              </span>
+            </label>
 
             {error && (
               <p role="alert" className="text-sm text-danger">
