@@ -108,7 +108,6 @@ export function useLocalTranscription(options: {
       setState("error");
       return;
     }
-    const device = capability === "webgpu" ? "webgpu" : "wasm";
     disable();
     enabledRef.current = true;
     onActiveChange?.(true);
@@ -116,13 +115,34 @@ export function useLocalTranscription(options: {
     setState("initializing");
     setStatus("Preparing transcription…");
     try {
-      const worker = new STTWorkerClient();
-      workerRef.current = worker;
       setState("loading-model");
-      await worker.initialize(model, device, (nextProgress, nextStatus) => {
-        setProgress(nextProgress);
-        setStatus(nextStatus || "Downloading speech model…");
-      });
+      const initializeWorker = async (
+        selectedModel: string,
+        device: "webgpu" | "wasm",
+      ) => {
+        const worker = new STTWorkerClient();
+        workerRef.current = worker;
+        await worker.initialize(selectedModel, device, (nextProgress, nextStatus) => {
+          setProgress(nextProgress);
+          setStatus(nextStatus || "Downloading speech model…");
+        });
+      };
+
+      try {
+        await initializeWorker(
+          model,
+          capability === "webgpu" ? "webgpu" : "wasm",
+        );
+      } catch (webgpuError) {
+        if (capability !== "webgpu") throw webgpuError;
+        workerRef.current?.dispose();
+        workerRef.current = null;
+        setProgress(0);
+        setStatus("WebGPU unavailable. Loading lightweight fallback…");
+        const fallbackModel = modelForCapability("wasm");
+        if (!fallbackModel) throw webgpuError;
+        await initializeWorker(fallbackModel, "wasm");
+      }
       setState("ready");
       setStatus("Transcription ready");
       await attachMicrophone();
