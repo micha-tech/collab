@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocalParticipant } from "@livekit/components-react";
-import { MonitorUp, MonitorOff, Camera, CameraOff, Mic, MicOff, MessageSquare, Users, PhoneOff, Square, NotepadText, MoreHorizontal } from "lucide-react";
+import { MonitorUp, MonitorOff, Camera, CameraOff, Mic, MicOff, MessageSquare, Users, PhoneOff, Square, NotepadText, MoreHorizontal, Captions } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
@@ -19,6 +19,7 @@ interface MeetingControlsProps {
   onToggleChat: () => void;
   onToggleParticipants: () => void;
   onToggleNotes: () => void;
+  onToggleTranscript: () => void;
   onLeave: () => void;
   onEnd: () => void;
   isHost: boolean;
@@ -27,6 +28,7 @@ interface MeetingControlsProps {
   chatOpen: boolean;
   participantsOpen: boolean;
   notesOpen: boolean;
+  transcriptOpen: boolean;
 }
 
 interface ControlButtonProps {
@@ -79,6 +81,7 @@ export function MeetingControls({
   onToggleChat,
   onToggleParticipants,
   onToggleNotes,
+  onToggleTranscript,
   onLeave,
   onEnd,
   isHost,
@@ -87,6 +90,7 @@ export function MeetingControls({
   chatOpen,
   participantsOpen,
   notesOpen,
+  transcriptOpen,
 }: MeetingControlsProps) {
   const { localParticipant } = useLocalParticipant();
   const [micOn, setMicOn] = useState(true);
@@ -243,6 +247,15 @@ export function MeetingControls({
           <NotepadText className="size-5" />
         </ControlButton>
 
+        <ControlButton
+          label="Live transcript"
+          onClick={onToggleTranscript}
+          active={transcriptOpen}
+          className="hidden min-[480px]:flex"
+        >
+          <Captions className="size-5" />
+        </ControlButton>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
@@ -275,6 +288,9 @@ export function MeetingControls({
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={onToggleNotes} className="focus:bg-room-surface-elevated">
               <NotepadText /> Notes
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={onToggleTranscript} className="focus:bg-room-surface-elevated">
+              <Captions /> Live transcript
             </DropdownMenuItem>
             {isHost && (
               <>

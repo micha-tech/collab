@@ -68,6 +68,21 @@ export type ParticipantSessionRow = {
   updated_at: string;
 }
 
+export type TranscriptSegmentRow = {
+  id: string;
+  meeting_id: string;
+  speaker_id: string;
+  livekit_identity: string;
+  speaker_name: string | null;
+  text: string;
+  started_at: string;
+  ended_at: string;
+  sequence: number;
+  is_final: boolean;
+  source: string;
+  created_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -118,6 +133,12 @@ export interface Database {
         Update: Partial<ParticipantSessionRow>;
         Relationships: [];
       };
+      meeting_transcript_segments: {
+        Row: TranscriptSegmentRow;
+        Insert: Partial<TranscriptSegmentRow> & Pick<TranscriptSegmentRow, "meeting_id" | "speaker_id" | "livekit_identity" | "text" | "started_at" | "ended_at">;
+        Update: Partial<TranscriptSegmentRow>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -156,6 +177,16 @@ export interface Database {
           p_disconnect_reason: number;
         };
         Returns: boolean;
+      };
+      insert_transcript_segment: {
+        Args: {
+          p_meeting_id: string;
+          p_livekit_identity: string;
+          p_text: string;
+          p_started_at: string;
+          p_ended_at: string;
+        };
+        Returns: TranscriptSegmentRow[];
       };
     };
     Enums: Record<string, never>;

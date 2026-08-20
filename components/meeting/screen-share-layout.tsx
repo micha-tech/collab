@@ -4,13 +4,16 @@ import { VideoTrack, useTracks } from "@livekit/components-react";
 import { Track } from "livekit-client";
 import type { TrackReference } from "@livekit/components-core";
 import { Avatar } from "@/components/ui/avatar";
+import { AIParticipantTile } from "@/components/transcription/ai-participant-tile";
 
 export function ScreenShareLayout({
   localIdentity,
   onStopSharing,
+  transcriptionActive = false,
 }: {
   localIdentity?: string;
   onStopSharing?: () => void;
+  transcriptionActive?: boolean;
 }) {
   const screenTracks = useTracks([Track.Source.ScreenShare]);
   const cameraTracks = useTracks([
@@ -58,7 +61,7 @@ export function ScreenShareLayout({
         )}
       </div>
 
-      {cameraTracks.length > 1 && (
+      {(cameraTracks.length > 1 || transcriptionActive) && (
         <div className="mt-3 flex gap-2 overflow-x-auto px-1 pb-1">
           {cameraTracks.map((t) => (
             <div
@@ -83,6 +86,11 @@ export function ScreenShareLayout({
               </span>
             </div>
           ))}
+          {transcriptionActive && (
+            <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-md bg-room-surface">
+              <AIParticipantTile compact />
+            </div>
+          )}
         </div>
       )}
     </div>

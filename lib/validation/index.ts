@@ -53,6 +53,14 @@ export const sendMessageSchema = z.object({
     .max(CHAT_MAX_LENGTH, `Message must be at most ${CHAT_MAX_LENGTH} characters`),
 });
 
+export const transcriptSegmentSchema = z.object({
+  meetingId: z.string().uuid(),
+  livekitIdentity: z.string().min(8).max(160),
+  text: z.string().trim().min(1).max(4000),
+  startedAt: z.string().datetime(),
+  endedAt: z.string().datetime(),
+});
+
 export const signInSchema = z.object({
   email: z.string().email("Enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),

@@ -43,6 +43,21 @@ export interface MeetingMessage {
   created_at: string;
 }
 
+export interface MeetingTranscriptSegment {
+  id: string;
+  meeting_id: string;
+  speaker_id: string;
+  livekit_identity: string;
+  speaker_name: string | null;
+  text: string;
+  started_at: string;
+  ended_at: string;
+  sequence: number;
+  is_final: true;
+  source: "local-asr";
+  created_at: string;
+}
+
 export interface LiveKitTokenResponse {
   token: string;
   serverUrl: string;

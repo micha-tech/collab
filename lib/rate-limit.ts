@@ -152,4 +152,5 @@ export const RATE_LIMIT = {
   livekitToken: { limit: 30, windowMs: 60_000 },
   join: { limit: 30, windowMs: 60_000 },
   endMeeting: { limit: 6, windowMs: 60_000 },
+  transcriptInsert: { limit: 30, windowMs: 60_000 },
 } as const;

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useConnectionState } from "@livekit/components-react";
 import { ConnectionState } from "livekit-client";
-import { Check, Copy } from "lucide-react";
+import { Bot, Check, Copy } from "lucide-react";
 import { meetingUrl } from "@/lib/utils";
 import { BrandMark } from "@/components/brand-mark";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -13,10 +13,12 @@ export function RoomHeader({
   meetingSlug,
   title,
   participantCount,
+  transcriptionActive = false,
 }: {
   meetingSlug: string;
   title: string;
   participantCount: number;
+  transcriptionActive?: boolean;
 }) {
   const [copied, setCopied] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -81,6 +83,11 @@ export function RoomHeader({
           {reconnecting && (
             <span className="text-amber-400" role="status">
               • Reconnecting…
+            </span>
+          )}
+          {transcriptionActive && (
+            <span className="flex items-center gap-1 text-violet-300" role="status">
+              • <Bot className="size-3" /> AI transcription active
             </span>
           )}
         </div>

@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
               "frame-ancestors 'none'",
               "form-action 'self'",
               "object-src 'none'",
-              "script-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self' data:",
               "img-src 'self' data: blob: https:",

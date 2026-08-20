@@ -5,6 +5,7 @@ import { Track } from "livekit-client";
 import type { TrackReferenceOrPlaceholder } from "@livekit/components-core";
 import { cn } from "@/lib/utils";
 import { ParticipantTile } from "@/components/meeting/participant-tile";
+import { AIParticipantTile } from "@/components/transcription/ai-participant-tile";
 
 function orderTracks(
   tracks: TrackReferenceOrPlaceholder[],
@@ -39,13 +40,15 @@ function gridClass(count: number): string {
 export function VideoGrid({
   localIdentity,
   compact = false,
+  transcriptionActive = false,
 }: {
   localIdentity?: string;
   compact?: boolean;
+  transcriptionActive?: boolean;
 }) {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: true }]);
   const ordered = orderTracks(tracks, localIdentity);
-  const count = ordered.length;
+  const count = ordered.length + (transcriptionActive ? 1 : 0);
 
   if (count === 0) {
     return (
@@ -74,6 +77,11 @@ export function VideoGrid({
           />
         </div>
       ))}
+      {transcriptionActive && (
+        <div className="min-h-0 min-w-0">
+          <AIParticipantTile />
+        </div>
+      )}
     </div>
   );
 }
