@@ -13,6 +13,7 @@ import { VideoGrid } from "@/components/meeting/video-grid";
 import { ScreenShareLayout } from "@/components/meeting/screen-share-layout";
 import { MeetingControls } from "@/components/meeting/room-controls";
 import { ChatPanel } from "@/components/meeting/chat-panel";
+import { CollaborationPanel } from "@/components/meeting/collaboration-panel";
 import { ParticipantsPanel } from "@/components/meeting/participants-panel";
 import { EndMeetingDialog } from "@/components/meeting/end-meeting-dialog";
 
@@ -35,6 +36,7 @@ export function MeetingRoom({
 }: MeetingRoomProps) {
   const [chatOpen, setChatOpen] = useState(false);
   const [participantsOpen, setParticipantsOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
   const [chatUnread, setChatUnread] = useState(false);
   const [endDialogOpen, setEndDialogOpen] = useState(false);
 
@@ -52,12 +54,20 @@ export function MeetingRoom({
 
   const toggleChat = () => {
     setParticipantsOpen(false);
+    setNotesOpen(false);
     setChatOpen((v) => !v);
   };
 
   const toggleParticipants = () => {
     setChatOpen(false);
+    setNotesOpen(false);
     setParticipantsOpen((v) => !v);
+  };
+
+  const toggleNotes = () => {
+    setChatOpen(false);
+    setParticipantsOpen(false);
+    setNotesOpen((v) => !v);
   };
 
   return (
@@ -97,6 +107,13 @@ export function MeetingRoom({
           onNewMessage={setChatUnread}
         />
 
+        <CollaborationPanel
+          open={notesOpen}
+          meetingId={meeting.id}
+          displayName={displayName}
+          onClose={() => setNotesOpen(false)}
+        />
+
         <ParticipantsPanel
           open={participantsOpen}
           onClose={() => setParticipantsOpen(false)}
@@ -106,6 +123,7 @@ export function MeetingRoom({
         <MeetingControls
           onToggleChat={toggleChat}
           onToggleParticipants={toggleParticipants}
+          onToggleNotes={toggleNotes}
           onLeave={onLeave}
           onEnd={() => setEndDialogOpen(true)}
           isHost={isHost}
@@ -113,6 +131,7 @@ export function MeetingRoom({
           chatUnread={chatUnread}
           chatOpen={chatOpen}
           participantsOpen={participantsOpen}
+          notesOpen={notesOpen}
         />
       </main>
 

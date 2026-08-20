@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocalParticipant } from "@livekit/components-react";
-import { MonitorUp, MonitorOff, Camera, CameraOff, Mic, MicOff, MessageSquare, Users, PhoneOff, Square } from "lucide-react";
+import { MonitorUp, MonitorOff, Camera, CameraOff, Mic, MicOff, MessageSquare, Users, PhoneOff, Square, NotepadText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 interface MeetingControlsProps {
   onToggleChat: () => void;
   onToggleParticipants: () => void;
+  onToggleNotes: () => void;
   onLeave: () => void;
   onEnd: () => void;
   isHost: boolean;
@@ -17,6 +18,7 @@ interface MeetingControlsProps {
   chatUnread: boolean;
   chatOpen: boolean;
   participantsOpen: boolean;
+  notesOpen: boolean;
 }
 
 interface ControlButtonProps {
@@ -62,6 +64,7 @@ function ControlButton({
 export function MeetingControls({
   onToggleChat,
   onToggleParticipants,
+  onToggleNotes,
   onLeave,
   onEnd,
   isHost,
@@ -69,6 +72,7 @@ export function MeetingControls({
   chatUnread,
   chatOpen,
   participantsOpen,
+  notesOpen,
 }: MeetingControlsProps) {
   const { localParticipant } = useLocalParticipant();
   const [micOn, setMicOn] = useState(true);
@@ -198,6 +202,14 @@ export function MeetingControls({
           active={participantsOpen}
         >
           <Users className="size-5" />
+        </ControlButton>
+
+        <ControlButton
+          label="Notes"
+          onClick={onToggleNotes}
+          active={notesOpen}
+        >
+          <NotepadText className="size-5" />
         </ControlButton>
 
         <ControlButton label="Leave" onClick={onLeave} danger>

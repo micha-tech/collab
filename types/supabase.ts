@@ -41,6 +41,12 @@ export type MessageRow = {
   created_at: string;
 }
 
+export type MeetingNotesRow = {
+  meeting_id: string;
+  state: number[];
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -70,6 +76,12 @@ export interface Database {
         Row: MessageRow;
         Insert: Pick<MessageRow, "meeting_id" | "sender_id" | "sender_name" | "body">;
         Update: Partial<MessageRow>;
+        Relationships: [];
+      };
+      meeting_notes: {
+        Row: MeetingNotesRow;
+        Insert: Pick<MeetingNotesRow, "meeting_id"> & Partial<Pick<MeetingNotesRow, "state">>;
+        Update: Partial<MeetingNotesRow>;
         Relationships: [];
       };
     };
