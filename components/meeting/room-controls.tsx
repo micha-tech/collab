@@ -215,7 +215,7 @@ export function MeetingControls({
           label={chatUnread && !chatOpen ? "Chat, new message" : "Chat"}
           onClick={onToggleChat}
           active={chatOpen}
-          className="hidden sm:flex"
+          className="hidden min-[480px]:flex"
         >
           <span className="relative">
             <MessageSquare className="size-5" />
@@ -229,7 +229,7 @@ export function MeetingControls({
           label="Participants"
           onClick={onToggleParticipants}
           active={participantsOpen}
-          className="hidden sm:flex"
+          className="hidden min-[480px]:flex"
         >
           <Users className="size-5" />
         </ControlButton>
@@ -238,7 +238,7 @@ export function MeetingControls({
           label="Notes"
           onClick={onToggleNotes}
           active={notesOpen}
-          className="hidden sm:flex"
+          className="hidden min-[480px]:flex"
         >
           <NotepadText className="size-5" />
         </ControlButton>
@@ -252,7 +252,7 @@ export function MeetingControls({
                   ? "More meeting controls, new chat message"
                   : "More meeting controls"
               }
-              className="flex size-11 items-center justify-center rounded-full border border-room-border bg-room-surface text-room-muted transition-colors hover:bg-room-surface-elevated hover:text-room-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 sm:hidden"
+              className="flex size-11 items-center justify-center rounded-full border border-room-border bg-room-surface text-room-muted transition-colors hover:bg-room-surface-elevated hover:text-room-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 min-[480px]:hidden"
             >
               <span className="relative">
                 <MoreHorizontal className="size-5" />
@@ -296,7 +296,7 @@ export function MeetingControls({
         <button
           type="button"
           onClick={onEnd}
-          className="pointer-events-auto mt-2 hidden h-10 items-center gap-2 rounded-full border border-danger/70 bg-danger/90 px-4 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-danger-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/60 sm:flex"
+          className="pointer-events-auto mt-2 hidden h-10 items-center gap-2 rounded-full border border-danger/70 bg-danger/90 px-4 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-danger-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/60 min-[480px]:flex"
         >
           <Square className="size-4 fill-current" aria-hidden />
           End meeting
